@@ -7,6 +7,6 @@ if(!isset($_SESSION['status']) or $_SESSION['status'] < 10){
     die;
 }
 include('db.php');
-$result = $db->query('select id from godine where aktivan = 1') or die(mysql_error());
+$result = $db->query('select id from %PREFIKS%godine where aktivan = 1') or die(mysql_error());
 $id_godina=$result->fetchColumn();
 ?>

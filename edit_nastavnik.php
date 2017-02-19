@@ -8,7 +8,7 @@ if(!isset ($_SESSION) or $_SESSION['status']<2) die('<h1>Trenutno nemate dovoljn
 include 'db.php';
 if(!isset ($_POST['submit'])){
     $nastavnik=$_SESSION['uid'];
-    $res=$db->query("SELECT id, pravo_ime, email from nastavnici where id=$nastavnik");
+    $res=$db->query("SELECT id, pravo_ime, email from %PREFIKS%nastavnici where id=$nastavnik");
     $row=$res->fetch(PDO::FETCH_ASSOC);
     echo "<form method='POST' action=''>
         Pravo ime: <input type='text' value='$row[pravo_ime]' name='ime'><br />
@@ -20,7 +20,7 @@ if(!isset ($_POST['submit'])){
     //print_r($_POST);
     $ime = $db->quote($_POST['ime']);
     $email = $db->quote($_POST['email']);
-    $db->query("UPDATE nastavnici SET pravo_ime=$ime, email=$email WHERE id=$_SESSION[uid]");
+    $db->query("UPDATE %PREFIKS%nastavnici SET pravo_ime=$ime, email=$email WHERE id=$_SESSION[uid]");
     
 }
 

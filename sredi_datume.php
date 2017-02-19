@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 include 'db.php';
-$sql = "Select * FROM datumi WHERE aktivan=1 ORDER BY id ASC" ;
+$sql = "Select * FROM %PREFIKS%datumi WHERE aktivan=1 ORDER BY id ASC" ;
 $rb = 0;
 $tj = -2;
 $rtj = 0;
@@ -15,7 +15,7 @@ While($row = mysql_fetch_array($result)){
         $rtj++;
         $tj = date('W', strtotime($row['dan']));
     }
-    $sql = "UPDATE datumi SET redbr= $rb, tjedan=$rtj WHERE id=$row[id]";
+    $sql = "UPDATE %PREFIKS%datumi SET redbr= $rb, tjedan=$rtj WHERE id=$row[id]";
     mysql_query($sql) or die (mysql_error());
 }
 ?>

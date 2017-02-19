@@ -9,7 +9,7 @@ class MYPDF extends TCPDF {
 	// Load table data from file
 	public function LoadData() {
     include 'db.php';
-    $result = $db->query('select id from godine where aktivan = 1') or die(mysql_error());
+    $result = $db->query('select id from %PREFIKS%godine where aktivan = 1') or die(mysql_error());
     $id_godina=$result->fetchColumn();
         
             
@@ -17,15 +17,15 @@ class MYPDF extends TCPDF {
     if(in_array($_GET['o'], range('A','G'))) $odjel=$_GET['o']; else            header ('Location: index.php');
     if(isset ($_GET['j']) and $_GET['j']==1) {$join=' LEFT ';$join1="";} else {$join= ' RIGHT '; $join1=">'2012.01.01'";}
 
-$query = "SELECT datumi.dan as dan,
-        predmeti.naziv aS predmet,
-        nastavnici.pravo_ime as ime,
-        vremenik.tip as tip
-        FROM datumi
-        $join JOIN vremenik ON datumi.id=id_dan and razred=$razred and odjel='$odjel' and potvrda=1
-        LEFT JOIN nastavnici ON nastavnici.id=id_nastavnik
-        left JOIN predmeti ON predmeti.id=id_predmet
-        where datumi.dan $join1 and id_godina=$id_godina  AND datumi.aktivan=1 ORDER BY datumi.dan";
+$query = "SELECT %PREFIKS%datumi.dan as dan,
+        %PREFIKS%predmeti.naziv aS predmet,
+        %PREFIKS%nastavnici.pravo_ime as ime,
+        %PREFIKS%vremenik.tip as tip
+        FROM %PREFIKS%datumi
+        $join JOIN %PREFIKS%vremenik ON %PREFIKS%datumi.id=id_dan and razred=$razred and odjel='$odjel' and potvrda=1
+        LEFT JOIN %PREFIKS%nastavnici ON %PREFIKS%nastavnici.id=id_nastavnik
+        left JOIN %PREFIKS%predmeti ON %PREFIKS%predmeti.id=id_predmet
+        where %PREFIKS%datumi.dan $join1 and id_godina=$id_godina  AND %PREFIKS%datumi.aktivan=1 ORDER BY %PREFIKS%datumi.dan";
     $result = $db->query($query);
     $d=array(1=>'Ponedeljak','Utorak','Srijeda','Četvrtak','Petak');
     $t = array(1=>'Duga provjera', 'Kratka provjera');

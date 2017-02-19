@@ -2,21 +2,21 @@
 if(!isset($_SESSION)) session_start();
 if(!isset ($_SESSION['status']) or $_SESSION['status']<2)    die ('Krive ovlast<br /><a href="index.php">Nazad</a>');
 include_once 'db.php';
-$result = $db->query('select id from godine where aktivan = 1') or die(mysql_error());
+$result = $db->query('select id from %PREFIKS%godine where aktivan = 1') or die(mysql_error());
 $id_godina=$result->fetchColumn();
-$query = "SELECT datumi.dan as dan,
-        predmeti.naziv aS predmet,
-        nastavnici.pravo_ime as ime,
-        vremenik.tip as tip,
-        vremenik.razred as razred,
-        vremenik.odjel as odjel,
-        vremenik.potvrda as potvrda
-        FROM datumi
-        RIGHT JOIN vremenik ON datumi.id=id_dan and id_nastavnik=$_SESSION[uid]
-        LEFT JOIN nastavnici ON nastavnici.id=id_nastavnik
-        left JOIN predmeti ON predmeti.id=id_predmet
-        where id_godina=$id_godina AND datumi.aktivan=1  
-        ORDER BY vremenik.razred, vremenik.odjel, vremenik.id_predmet, datumi.dan";
+$query = "SELECT %PREFIKS%datumi.dan as dan,
+        %PREFIKS%predmeti.naziv aS predmet,
+        %PREFIKS%nastavnici.pravo_ime as ime,
+        %PREFIKS%vremenik.tip as tip,
+        %PREFIKS%vremenik.razred as razred,
+        %PREFIKS%vremenik.odjel as odjel,
+        %PREFIKS%vremenik.potvrda as potvrda
+        FROM %PREFIKS%datumi
+        RIGHT JOIN %PREFIKS%vremenik ON %PREFIKS%datumi.id=id_dan and id_nastavnik=$_SESSION[uid]
+        LEFT JOIN %PREFIKS%nastavnici ON %PREFIKS%nastavnici.id=id_nastavnik
+        left JOIN %PREFIKS%predmeti ON %PREFIKS%predmeti.id=id_predmet
+        where id_godina=$id_godina AND %PREFIKS%datumi.aktivan=1  
+        ORDER BY %PREFIKS%vremenik.razred, %PREFIKS%vremenik.odjel, %PREFIKS%vremenik.id_predmet, %PREFIKS%datumi.dan";
 $result=$db->query($query) or die (mysql_error());
 if($result->rowCount()>0){
     $d=array(1=>'Pon','Uto','Srije','Čet','Pet');

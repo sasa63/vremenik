@@ -13,16 +13,16 @@ Unesite trajanje razdoblja:<br />
 
 if (isset($_POST['Submit']) and $_POST['Submit'] == 'Razdoblja') {
     
-    $sql = 'SELECT dan FROM praznici WHERE 1';
+    $sql = 'SELECT dan FROM %PREFIKS%praznici WHERE 1';
     $result = $db->query($sql);
     //$sql = "UPDATE `datumi` a SET redbr=1+((SELECT COUNT(*) FROM (SELECT dan FROM datumi WHERE aktivan =1 and id_godina =1) b WHERE b.dan<a.dan)) WHERE aktivan =1 and id_godina=1";
     while ($r = $result->fetch()) {
         $praznici[] = $r[0];
     }
     
-    echo $sql = "INSERT INTO godine SET naziv=" . $db->quote($_POST['naziv']). ' , aktivan=0';
+    $sql = "INSERT INTO %PREFIKS%godine SET naziv=" . $db->quote($_POST['naziv']). ' , aktivan=0';
     $db->query($sql) ;
-    echo $id_godina = $db->lastInsertID();
+     $id_godina = $db->lastInsertID();
     //echo $_POST['do1'];
     $od = explode('.', preg_replace('/[^0-9]/', '.', $_POST['od1']));
     if($od[2]<100) $od[2] +=2000;
@@ -91,7 +91,7 @@ if (isset($_POST['Submit']) and $_POST['Submit'] == 'Razdoblja') {
         $od1 += 86400;
     }
     $value = implode(', ', $value);
-   echo $sql = "INSERT INTO datumi $fields VALUE $value";
+    $sql = "INSERT INTO %PREFIKS%datumi $fields VALUE $value";
     $db->query($sql);
     //$_POST['submit']='Zapamti';
     //include 'kalendar2.php';

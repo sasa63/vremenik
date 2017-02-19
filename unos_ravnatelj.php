@@ -7,12 +7,12 @@
 if(!isset ($_SESSION)) session_start ();
 if(!isset($_SESSION['status']) or $_SESSION['status']<8)die('Nemate ovlasti');
 include_once 'db.php';
-$result = $db->query('select id from godine where aktivan = 1');
+$result = $db->query('select id from %PREFIKS%godine where aktivan = 1');
 $row= $result->fetch(PDO::FETCH_ASSOC);
 $id_godina=$row['id'];
 
 if(!isset ($_POST['submit'])){
-    $result = $db->query("select id, pravo_ime from nastavnici order by pravo_ime");
+    $result = $db->query("select id, pravo_ime from %PREFIKS%nastavnici order by pravo_ime");
     echo 'Odaberi nastavnika:<br />
         <form method="POST" action="">
         <select name="nastavnik">';
@@ -24,7 +24,7 @@ if(!isset ($_POST['submit'])){
         </form>";
 } else {
     if($_POST['submit']=='Dalje'){
-        $query = "SELECT * FROM radi_u LEFT JOIN predmeti ON predmeti.id=id_predmet 
+        $query = "SELECT * FROM %PREFIKS%radi_u LEFT JOIN %PREFIKS%predmeti ON %PREFIKS%predmeti.id=id_predmet 
             WHERE id_godina=$id_godina AND id_nastavnik=".(int)$_POST['nastavnik'];
 
 $result = $db->query($query);
@@ -44,7 +44,7 @@ echo "<input type='hidden' value='$_POST[nastavnik]' name='nastavnik' />";
     echo 'Odaberi dan:<br />
 
     <select name="datum">';
-    $result = $db->query("SELECT id, dan from datumi WHERE dan>NOW() AND id_godina=$id_godina ORDER BY dan");
+    $result = $db->query("SELECT id, dan from %PREFIKS%datumi WHERE dan>NOW() AND id_godina=$id_godina ORDER BY dan");
     while ($row = $result->fetch(PDO::FETCH_ASSOC)){
             $dan = date('d.m.Y.',  strtotime($row['dan']));
             echo "<option value='$row[id]'>$dan</option>\br";
@@ -60,7 +60,7 @@ echo "<input type='hidden' value='$_POST[nastavnik]' name='nastavnik' />";
         list ($razred, $odjel, $predmet1) = explode(',', $_POST['razred']);
         $dan = $_POST['datum'];
         $tip = isset ($_POST['kratka']) ? $_POST['kratka'] : 1;
-        $sql = "INSERT INTO vremenik (id_dan, id_predmet, id_nastavnik, razred, odjel, tip, potvrda) VALUE
+        $sql = "INSERT INTO %PREFIKS%vremenik (id_dan, id_predmet, id_nastavnik, razred, odjel, tip, potvrda) VALUE
                 ($dan, $predmet1, $nastavnik, $razred, '$odjel', $tip, 1)";
         $db->query($sql) or die('Podaci nisu upisani');
         header('Location: index.php');

@@ -5,34 +5,35 @@
  */
 require_once('tcpdf/config/lang/hrv.php');
 require_once('tcpdf/tcpdf.php');
-include('db.php');
+
 
 
 
 // extend TCPF with custom functions
 session_start();
+
 class MYPDF extends TCPDF {
 
 	// Load table data from file
 	public function LoadData($file) {
-            include 'db.php';
-            $result = $db->query('select id from godine where aktivan = 1') or die(mysql_error());
+          include('db.php');
+            $result = $db->query('select id from %PREFIKS%godine where aktivan = 1') or die('greška datum');
             $id_godina=$result->fetchColumn();
 
-            $query = "SELECT datumi.dan as dan,
-        predmeti.naziv aS predmet,
-        nastavnici.pravo_ime as ime,
-        vremenik.tip as tip,
-        vremenik.razred as razred,
-        vremenik.odjel as odjel,
-        vremenik.potvrda as potvrda
-        FROM datumi
-        RIGHT JOIN vremenik ON (datumi.id=id_dan and id_nastavnik=$_SESSION[uid])
-        LEFT JOIN nastavnici ON nastavnici.id=id_nastavnik
-        left JOIN predmeti ON predmeti.id=id_predmet
-        where datumi.id_godina=$id_godina 
-        ORDER BY vremenik.razred, vremenik.odjel, vremenik.id_predmet, datumi.dan";
-$result=$db->query($query) ));
+            $query = "SELECT %PREFIKS%datumi.dan as dan,
+        %PREFIKS%predmeti.naziv aS predmet,
+        %PREFIKS%nastavnici.pravo_ime as ime,
+        %PREFIKS%vremenik.tip as tip,
+        %PREFIKS%vremenik.razred as razred,
+        %PREFIKS%vremenik.odjel as odjel,
+        %PREFIKS%vremenik.potvrda as potvrda
+        FROM %PREFIKS%datumi
+        RIGHT JOIN %PREFIKS%vremenik ON (%PREFIKS%datumi.id=id_dan and id_nastavnik=$_SESSION[uid])
+        LEFT JOIN %PREFIKS%nastavnici ON %PREFIKS%nastavnici.id=id_nastavnik
+        left JOIN %PREFIKS%predmeti ON %PREFIKS%predmeti.id=id_predmet
+        where %PREFIKS%datumi.id_godina=$id_godina 
+        ORDER BY %PREFIKS%vremenik.razred, %PREFIKS%vremenik.odjel, %PREFIKS%vremenik.id_predmet, %PREFIKS%datumi.dan";
+$result=$db->query($query) or die('greška upit');
     $d=array(1=>'Pon','Uto','Srije','Čet','Pet');
     while ($row=  $result->fetch(PDO::FETCH_ASSOC)){
         $dan = date('d.m.Y ', strtotime($row['dan']));

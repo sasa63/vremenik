@@ -8,17 +8,17 @@ if(isset ($_POST['submit'])and $_POST['submit']=='Pokaži'){
     if(isset($_POST['razred'])and in_array($_POST['razred'], range(1, 4))) $razred=$_POST['razred'];else        die ('Odaberi razred');
     if(isset($_POST['odjel'])and in_array($_POST['odjel'], range('A', 'G'))) $odjel=$_POST['odjel'];else        die ('Odaberi odjel');
     if(!isset ($_POST['sve'])) {$join = ' RIGHT '; $w='datumi.dan > NOW()';} else {$join = ' LEFT '; $w='1';}
-    $result = mysql_query('select id from godine where aktivan = 1') or die(mysql_error());
+    $result = mysql_query('select id from %PREFIKS%godine where aktivan = 1') or die(mysql_error());
     $id_godina=mysql_result($result,0,0);
-    $query = "SELECT datumi.dan as dan,
-        predmeti.naziv aS predmet,
-        nastavnici.pravo_ime as ime,
-        vremenik.tip as tip
-        FROM datumi
-        $join JOIN vremenik ON datumi.id=id_dan and razred=$razred and odjel='$odjel' and potvrda=1
-        LEFT JOIN nastavnici ON nastavnici.id=id_nastavnik
-        left JOIN predmeti ON predmeti.id=id_predmet
-        where $w AND id_godina=$id_godina AND datumi.aktivan=1  order by datumi.dan";
+    $query = "SELECT %PREFIKS%datumi.dan as dan,
+        %PREFIKS%predmeti.naziv aS predmet,
+        %PREFIKS%nastavnici.pravo_ime as ime,
+        %PREFIKS%vremenik.tip as tip
+        FROM %PREFIKS%datumi
+        $join JOIN %PREFIKS%vremenik ON %PREFIKS%datumi.id=id_dan and razred=$razred and odjel='$odjel' and potvrda=1
+        LEFT JOIN %PREFIKS%nastavnici ON %PREFIKS%nastavnici.id=id_nastavnik
+        left JOIN %PREFIKS%predmeti ON %PREFIKS%predmeti.id=id_predmet
+        where $w AND id_godina=$id_godina AND %PREFIKS%datumi.aktivan=1  order by %PREFIKS%datumi.dan";
     $result = mysql_query($query) or die (mysql_error());
     $d=array(1=>'Pon','Uto','Srije','Čet','Pet');
     $t = array(1=>'Duga provjera', 'Kratka provjera');

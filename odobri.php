@@ -9,16 +9,16 @@ if(!isset($_SESSION['status']) or ($_SESSION['status']<8) ) die('Nemate ovlasti'
     if(isset ($_POST['submit']) and $_POST['submit']=='Potvrdi'){
         $in='';
         if(isset ($_POST['potvrdi']) and is_array($_POST['potvrdi']))$in='('.implode (',', $_POST['potvrdi']).')';
-        if($in) {$up = $db->query("UPDATE vremenik set potvrda=1, zapravo_obrisan=obrisan Where id IN $in");
+        if($in) {$up = $db->query("UPDATE %PREFIKS%vremenik set potvrda=1, zapravo_obrisan=obrisan Where id IN $in");
         if($up->rowCount()){
             $f=fopen('datum.txt', 'w');
             fwrite($f, date('d.m.Y. \u H:i:s',  time()+6*3600));
             fclose($f);
             echo 'Podaci potvrđeni<a href="index.php"> klikni za povratak</a>';
         } else echo 'Provjere nisu potvrđene!';} else        echo 'Nema provjera za potvrdu!';
-        $db->query('INSERT into `obrisano` (`id_dan`,`id_predmet`,`id_nastavnik`,`razred`,`odjel`,`tip`,`obrisan`,`potvrda`)
-        (SELECT `id_dan`,`id_predmet`,`id_nastavnik`,`razred`,`odjel`,`tip`,`obrisan`,`potvrda` from vremenik WHERE zapravo_obrisan=1)');
-    $db->query('DELETE from vremenik WHERE zapravo_obrisan=1');
+        $db->query('INSERT into `%PREFIKS%obrisano` (`id_dan`,`id_predmet`,`id_nastavnik`,`razred`,`odjel`,`tip`,`obrisan`,`potvrda`)
+        (SELECT `id_dan`,`id_predmet`,`id_nastavnik`,`razred`,`odjel`,`tip`,`obrisan`,`potvrda` from %PREFIKS%vremenik WHERE zapravo_obrisan=1)');
+    $db->query('DELETE from %PREFIKS%vremenik WHERE zapravo_obrisan=1');
     
     }
     echo '<form method="POST" action ="">
@@ -27,19 +27,19 @@ if(!isset($_SESSION['status']) or ($_SESSION['status']<8) ) die('Nemate ovlasti'
     //if(isset($_POST['razred'])and in_array($_POST['razred'], range(1, 4))) $razred=$_POST['razred'];else        die ('Odaberi razred');
     //if(isset($_POST['odjel'])and in_array($_POST['odjel'], range('A', 'G'))) $odjel=$_POST['odjel'];else        die ('Odaberi odjel');
     //if(!isset ($_POST['sve'])) $join = ' RIGHT '; else $join = ' LEFT ';
-    $query = "SELECT datumi.dan as dan,
-        predmeti.naziv aS predmet,
-        nastavnici.pravo_ime as ime,
-        vremenik.id as id,
-        vremenik.obrisan as obrisan,
-        vremenik.razred as razred,
-        vremenik.odjel as odjel
-        FROM datumi
-        right JOIN vremenik ON datumi.id=id_dan 
-        LEFT JOIN nastavnici ON nastavnici.id=id_nastavnik
-        left JOIN predmeti ON predmeti.id=id_predmet
+    $query = "SELECT %PREFIKS%datumi.dan as dan,
+        %PREFIKS%predmeti.naziv aS predmet,
+        %PREFIKS%nastavnici.pravo_ime as ime,
+        %PREFIKS%vremenik.id as id,
+        %PREFIKS%vremenik.obrisan as obrisan,
+        %PREFIKS%vremenik.razred as razred,
+        %PREFIKS%vremenik.odjel as odjel
+        FROM %PREFIKS%datumi
+        right JOIN %PREFIKS%vremenik ON %PREFIKS%datumi.id=id_dan 
+        LEFT JOIN %PREFIKS%nastavnici ON %PREFIKS%nastavnici.id=id_nastavnik
+        left JOIN %PREFIKS%predmeti ON %PREFIKS%predmeti.id=id_predmet
         WHERE potvrda=0 or obrisan=1
-        ORDER BY razred, odjel, datumi.dan ASC";
+        ORDER BY razred, odjel, %PREFIKS%datumi.dan ASC";
     $result = $db->query($query);
     $d=array(1=>'Pon','Uto','Srije','Čet','Pet');
     $t = array(1=>'Duga provjera', 'Kratka provjera');

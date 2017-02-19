@@ -8,7 +8,7 @@ if(isset($_POST['submit']) and $_POST['submit']=='Prijava'){
         include 'db.php';
         //$db = new PDO("mysql:host=localhost;dbname=Vremenik","root","");
         $ime=preg_replace('/[^a-z.]/i', '', strtolower($_POST['ime']));
-	$sql="SELECT * FROM nastavnici WHERE ime='".$ime."' AND lozinka='".md5($_POST['loz'])."'";
+	$sql="SELECT * FROM %PREFIKS%nastavnici WHERE ime='".$ime."' AND lozinka='".md5($_POST['loz'])."'";
         $r=$db->query($sql);
         $us=0;
         $row = $r->fetch(); 
@@ -20,11 +20,11 @@ if(isset($_POST['submit']) and $_POST['submit']=='Prijava'){
             $_SESSION['uid']=$row['id'];
             $us=1;
         
-        $db->query("INSERT INTO login (ime, ip, uspjesno) VALUE ('$ime', '".$_SERVER['REMOTE_ADDR']. "', $us)");
-        $sql="select id from admin where id_nastavnik=$_SESSION[uid]";
+        $db->query("INSERT INTO %PREFIKS%login (ime, ip, uspjesno) VALUE ('$ime', '".$_SERVER['REMOTE_ADDR']. "', $us)");
+        $sql="select id from %PREFIKS%admin where id_nastavnik=$_SESSION[uid]";
         $result=$db->query($sql);
         if($result->fetch()) $_SESSION['admin']=1; 
-        $sql="SELECT id from razredi where id_razrednik=$_SESSION[uid]";
+        $sql="SELECT id from %PREFIKS%razredi where id_razrednik=$_SESSION[uid]";
         $result=$db->query($sql);
         if($row=$result ->fetch()) $_SESSION['razrednik']=$row[0];
         }

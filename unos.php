@@ -6,10 +6,10 @@
 //echo '<pre>',print_r($_POST),'</pre>';
 if($_SESSION['status']<2) die('<h1>Trenutno nemate dovoljne ovlasti!</h1>');
 include('db.php');
-$result = $db->query('select id from godine where aktivan = 1');
+$result = $db->query('select id from %PREFIKS%godine where aktivan = 1');
 $id_godina=$result->fetchColumn();
 if(!isset ($_POST['submit'])){
-$query = "SELECT * FROM radi_u LEFT JOIN predmeti ON predmeti.id=id_predmet WHERE id_godina=$id_godina AND id_nastavnik=".(int)$_SESSION['uid'];
+$query = "SELECT * FROM %PREFIKS%radi_u LEFT JOIN %PREFIKS%predmeti ON %PREFIKS%predmeti.id=id_predmet WHERE id_godina=$id_godina AND id_nastavnik=".(int)$_SESSION['uid'];
 
 $result = $db->query($query) ;
 if($result->rowCount()==0) {
@@ -41,13 +41,13 @@ Do <input type="text" value="', date('d.m.Y'),'" name="poc"> realizirano je <inp
         
         $in = '('.implode(',', array_keys($_POST['dan'])).')';
         list ($razred, $odjel, $predmet1) = explode(',', $_POST['razred']);
-        $query = $db->query('SELECT naziv From predmeti where id='.(int) $predmet1);
+        $query = $db->query('SELECT naziv From %PREFIKS%predmeti where id='.(int) $predmet1);
         $predmet = $query->fetchColumn();
         $d=array(0,0,0,0,0,0,0);
         foreach ($_POST['dan'] as $dan => $value) $d[$dan] = count ($value);
         $count = (int) $_POST['realizacija'];
-        $query ="SELECT count(vremenik.id) as x, datumi.tjedan FROM `vremenik` left join datumi on datumi.id=id_dan
-            WHERE razred='$razred' and odjel='$odjel' and obrisan<1 AND id_godina=$id_godina group by datumi.tjedan having x>=4";
+        $query ="SELECT count(%PREFIKS%vremenik.id) as x, %PREFIKS%datumi.tjedan FROM `%PREFIKS%vremenik` left join %PREFIKS%datumi on %PREFIKS%datumi.id=id_dan
+            WHERE razred='$razred' and odjel='$odjel' and obrisan<1 AND id_godina=$id_godina group by %PREFIKS%datumi.tjedan having x>=4";
         $result = $db->query($query) or die (mysql_error());
         $puni_tj=array();
         while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
@@ -56,19 +56,19 @@ Do <input type="text" value="', date('d.m.Y'),'" name="poc"> realizirano je <inp
         $dan = explode('.',trim($_POST['poc'],'. '));
         $prethodni_dan = '';
         $poc_datum = implode('-', array_reverse($dan));
-        $query = "SELECT datumi.id did,
-                         vremenik.id vid,
-                         datumi.dan as dan2,
-                         DATE_FORMAT(datumi.dan,'%e.%c.%Y') dan,
-                         dayofweek(datumi.dan) as dan1,
-                         datumi.tjedan as tjedan,
-                         predmeti.naziv predmet,
-                         vremenik.id_nastavnik nid,
-                         nastavnici.pravo_ime nastavnik
-        from datumi left join vremenik on (datumi.id=id_dan and razred=$razred and odjel='$odjel' and obrisan<1)
-        left join predmeti on predmeti.id=id_predmet
-        left join nastavnici on nastavnici.id=id_nastavnik
-        where dan>'$poc_datum' AND id_godina=$id_godina AND datumi.aktivan=1 order by datumi.dan";
+        $query = "SELECT %PREFIKS%datumi.id did,
+                         %PREFIKS%vremenik.id vid,
+                         %PREFIKS%datumi.dan as dan2,
+                         DATE_FORMAT(%PREFIKS%datumi.dan,'%e.%c.%Y') dan,
+                         dayofweek(%PREFIKS%datumi.dan) as dan1,
+                         %PREFIKS%datumi.tjedan as tjedan,
+                         %PREFIKS%predmeti.naziv predmet,
+                         %PREFIKS%vremenik.id_nastavnik nid,
+                         %PREFIKS%nastavnici.pravo_ime nastavnik
+        from %PREFIKS%datumi left join %PREFIKS%vremenik on (%PREFIKS%datumi.id=id_dan and razred=$razred and odjel='$odjel' and obrisan<1)
+        left join %PREFIKS%predmeti on %PREFIKS%predmeti.id=id_predmet
+        left join %PREFIKS%nastavnici on %PREFIKS%nastavnici.id=id_nastavnik
+        where dan>'$poc_datum' AND id_godina=$id_godina AND %PREFIKS%datumi.aktivan=1 order by %PREFIKS%datumi.dan";
         $nas_dan = array(2 => 'Pon', 'Uto', 'Srije' ,'Čet', 'Pet');
 
         $result = $db->query($query);
@@ -132,24 +132,24 @@ Do <input type="text" value="', date('d.m.Y'),'" name="poc"> realizirano je <inp
             $ppotvrda = $tip-1;
             //provjera
             $x='';
-            $result=$db->query("select tjedan from datumi where id=$dan");
+            $result=$db->query("select tjedan from %PREFIKS%datumi where id=$dan");
             $tj=$result->fetchColumn();
-            $result=$db->query("SELECT count(*) From datumi
-                                right join vremenik on (`datumi`.`id`=id_dan and razred=$razred and odjel='$odjel' and obrisan<1)
+            $result=$db->query("SELECT count(*) From %PREFIKS%datumi
+                                right join %PREFIKS%vremenik on (`%PREFIKS%datumi`.`id`=id_dan and razred=$razred and odjel='$odjel' and obrisan<1)
                                 WHERE tjedan =$tj AND id_godina=$id_godina") or die(mysql_error());
             if($result->fetchColumn()>3) $x.='U tom tjednu je već 4 ispita ';
-            $result=$db->query("SELECT id from vremenik WHERE razred=$razred and id_dan=$dan and odjel='$odjel' and obrisan<1") or die(mysql_error());
+            $result=$db->query("SELECT id from %PREFIKS%vremenik WHERE razred=$razred and id_dan=$dan and odjel='$odjel' and obrisan<1") or die(mysql_error());
             if($result->rowCount()>0)$x.='Za taj dan već postoji upisana provjera';
             
             
             //provjera
             if($x==''){
-            $query = "Insert into vremenik (id_dan, id_predmet, id_nastavnik, razred, odjel, tip, potvrda) VALUE
+            $query = "Insert into %PREFIKS%vremenik (id_dan, id_predmet, id_nastavnik, razred, odjel, tip, potvrda) VALUE
                 ($dan, $predmet, $nastavnik, $razred, '$odjel', $tip, $ppotvrda)";
             $result = $db->query($query) ;
             //if(mysql_affected_rows ()==1) $x.='OK'; else $x='Nepoznata greška';
             }
-            $result = $db->query("SELECT dan FROM datumi WHERE id=$dan");
+            $result = $db->query("SELECT dan FROM %PREFIKS%datumi WHERE id=$dan");
             $dan = date('d.m.Y', strtotime($result->fetchColumn()));
             $tip = $tip == 1 ? 'duga provjera' : 'kratka provjera';
             $poruka .="$dan -> $tip $x<br />\n";
@@ -158,21 +158,21 @@ Do <input type="text" value="', date('d.m.Y'),'" name="poc"> realizirano je <inp
         if(isset ($_POST['brisi'])){
             $poruka.="<br/><br/>Brisanja za razred $razred.$odjel i predmet $_POST[predmet_ime]:</br>\n";
             foreach($_POST['brisi'] as $id => $value){
-                $result=$db->query("SELECT datumi.dan as dan, id_dan, id_predmet, id_nastavnik, razred, odjel, tip, obrisan+0 as obrisano, potvrda
-                                    FROM vremenik,datumi WHERE vremenik.id=$id and datumi.id=id_dan") or die(mysql_error());
+                $result=$db->query("SELECT %PREFIKS%datumi.dan as dan, id_dan, id_predmet, id_nastavnik, razred, odjel, tip, obrisan+0 as obrisano, potvrda
+                                    FROM %PREFIKS%vremenik, %PREFIKS%datumi WHERE %PREFIKS%vremenik.id=$id and %PREFIKS%datumi.id=id_dan") or die(mysql_error());
                 $row= $result->fetch(PDO::FETCH_ASSOC);
                 $dan1 = date('d.m.Y',  strtotime ($row['dan']));
                 if($row['id_nastavnik']!=$_SESSION['uid']) die('<h1>Krive ovlasti!</h1>');
                 if(strtotime($row['dan']) > time()){
                     if($row['tip']==2 or $row['potvrda']==0){
                         if($row['tip']==2)$test=TRUE;
-                        $sql="Insert into obrisano (id_dan, id_predmet, id_nastavnik, razred, odjel,tip, obrisan, potvrda) value
+                        $sql="Insert into %PREFIKS%obrisano (id_dan, id_predmet, id_nastavnik, razred, odjel,tip, obrisan, potvrda) value
                                      ($row[id_dan],$row[id_predmet],$row[id_nastavnik],$row[razred],'$row[odjel]',$row[tip],'$row[obrisano]',$row[potvrda])";
                         $db->query($sql);
-                        $db->query("DELETE FROM vremenik where id=$id");
+                        $db->query("DELETE FROM %PREFIKS%vremenik where id=$id");
                         
                     } else {
-                        $db->query("UPDATE vremenik SET obrisan=1 WHERE ID=$id");
+                        $db->query("UPDATE %PREFIKS%vremenik SET obrisan=1 WHERE ID=$id");
                         //if(mysql_affected_rows ()==1) $poruka.= "$dan1 - najava brisanja provjere<br />\n";
                     }
                 }

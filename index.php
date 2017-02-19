@@ -15,19 +15,19 @@ if(isset ($_POST['submit']) and $_POST['submit']=='Odustani') header('Location: 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   </head>
   <body >
-      <div style="width: 100%; background-color: azure;">
+      <div style="width: 100%; background-color: azure; height: 100%;">
       <div class="zaglavlje" style="width: 100%; height: 80px;background-color: lime;font-size: 4em;text-align: center;font-weight: 900;
            vertical-align: middle;">
           V R E M E N I K
       </div>
-      <div class="levi" style="width: 330px; float: left; background-color: lightgreen;height: 100%;">
+      <div class="levi" style="width: 200px; float: left; background-color: lightgreen; min-height:100%; ">
           <br />
           <?php
           include 'login.php';
           include 'izbornik.php';
           ?>
       </div>
-      <div style="float: none; display: inline-block;min-width: inherit; height: 100%;">
+      <div style="float: none; display: inline-block;min-width: inherit; ">
           <?php
           if(isset($_GET['id'])){
           if(isset ($_GET['id']) and $_GET['id']==1){
@@ -48,6 +48,7 @@ if(isset ($_POST['submit']) and $_POST['submit']=='Odustani') header('Location: 
           if($_GET['id']==13) include 'kalendar2.php';
           if($_GET['id']==14) include 'aktiviraj.php';
           } else {
+              if(file_exists('datum.txt'))
               echo '<h1 style=" text-decoration: underline;">Zadnja promjena: ',  file_get_contents('datum.txt'),' sati</h1><br/><br/>';
               include 'vr_dj.php';
           }

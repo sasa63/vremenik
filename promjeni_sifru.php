@@ -17,7 +17,7 @@ if(isset ($_POST['submit']) and $_POST['submit'] == 'Promijeni'){
             $ss = md5($ss);
             $id=$_SESSION['uid'];
             $ime = $db->quote($_POST['ime']);
-            $sql = "UPDATE nastavnici SET lozinka='$ns' WHERE lozinka='$ss' and id=$id and ime=$ime";
+            $sql = "UPDATE %PREFIKS%nastavnici SET lozinka='$ns' WHERE lozinka='$ss' and id=$id and ime=$ime";
             $res=$db->query($sql);
            
         }

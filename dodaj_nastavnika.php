@@ -3,7 +3,7 @@ if(!isset($_SESSION))session_start();
 include 'db.php';
 if(isset ($_POST['submit'])and $_POST['submit']=='Dodaj' and $_POST['loz']==$_POST['loz1'] and $_POST['loz']!=""){
     
-    $sql = "INSERT INTO nastavnici (ime, pravo_ime, lozinka, email, status) VALUES (". $db->quote($_POST['ime']).", "
+    $sql = "INSERT INTO %PREFIKS%nastavnici (ime, pravo_ime, lozinka, email, status) VALUES (". $db->quote($_POST['ime']).", "
             .  $db->quote($_POST['pravo_ime']).", "
             . $db->quote(md5($_POST['loz'])).", "
             .  $db->quote($_POST['email']).",2)";
@@ -13,11 +13,11 @@ if(isset ($_POST['submit'])and $_POST['submit']=='Dodaj' and $_POST['loz']==$_PO
 if(isset ($_POST['submit']) and $_POST['submit']=='Brisi'){
 	
     $brisi = '('.  implode(',', $_POST['brisi']).')';
-    $db->query("DELETE from nastavnici Where id IN $brisi");
+    $db->query("DELETE from %PREFIKS%nastavnici Where id IN $brisi");
 }
 
 If($_SESSION['status']<10 )die ('nema ovlasti');
-$result = $db->query('select * from nastavnici ORDER BY pravo_ime');
+$result = $db->query('select * from %PREFIKS%nastavnici ORDER BY pravo_ime');
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
